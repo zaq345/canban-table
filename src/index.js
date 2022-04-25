@@ -1,14 +1,3 @@
-/*
-function validateForm() {
-  let x = document.forms["lesson9"]["fname"].value;
-  //console.log(x);
-  if (x == "") {
-      alert("Enter name");
-      return false;
-  }
-} 
-validateForm()
-*/
 let form = document.getElementById('l9');
 
 form.onsubmit = function(){
@@ -37,9 +26,8 @@ form.onsubmit = function(){
   }
   else{
     alert("Спасибо "+name+" "+lastname+", Ваше сообщение принято!");
-    console.log(JSON.stringify(name));
-    console.log(JSON.stringify(lastname));
-    console.log(JSON.stringify(age));
-    console.log(JSON.stringify(message));
+    let obj = {name, lastname, age, message};
+    console.log(JSON.stringify(obj));
+    document.getElementById('l9').reset();
   }
 }
