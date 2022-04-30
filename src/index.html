@@ -3,15 +3,71 @@
 <head>
   <meta charset="UTF-8">
   <title>Курс js</title>
+  <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  <form action="" name="l9" id="l9">
-    <input type="text" name="fname" id="fname" placeholder="name">
-    <input type="text" name="lastname" id="lastname" placeholder="lastname">
-    <input type="number" name="age" id="age" placeholder="age">
-    <input type="text" name="message" id="message" placeholder="message">
-    <button type="submit">Отправить</button>
-  </form>
+
+  <button id="plus">+</button>
+  
+  <table id="canban-table">
+
+    <thead>
+      <tr id="hrow">
+
+        <td>
+          <p class="column-header">
+            Column Header 1
+          </p>
+        </td>
+
+        <td>
+          <p class="column-header">
+            Column Header 2
+          </p>
+        </td>
+
+      </tr>
+    </thead>
+
+    <tbody>
+      
+      <tr id="brow">
+        <td class="card-container">
+          <div class="card">
+            <p class="card-header">
+              Card Header 1
+            </p>
+            <p class="card-body">
+              Card body 1
+            </p>
+          </div>
+        </td>
+
+        <td class="card-container">
+          <div class="card">
+            <p class="card-header">
+              Card Header 2
+            </p>
+            <p class="card-body">
+              Card body 2
+            </p>
+          </div>
+          <div class="card">
+            <p class="card-header">
+              Card Header 21
+            </p>
+            <p class="card-body">
+              Card body 21
+            </p>
+          </div>
+        </td>
+
+      </tr>
+
+    </tbody>
+    
+  </table>
+
   <script src="./index.js"></script>
 </body>
 </html>
