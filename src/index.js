@@ -1,3 +1,4 @@
+let countCard = 0;
 // код для работы кнопки для добавления новых колонок
 let plus = document.getElementById('plus');             // выбираем кнопку
 plus.onclick = function(){
@@ -13,6 +14,11 @@ plus.onclick = function(){
 
   let newColBody = document.createElement('td');        // создаём td для нового тела где будут карточки
   newColBody.setAttribute('class', 'card-container');
+  //////////////////
+  // перетаскивание
+  newColBody.ondrop = drop;
+  newColBody.ondragover = allowDrop;
+  //////////////////
   let tableBodyRow = document.getElementById('brow');   // выбираем ряд с карточками
   tableBodyRow.appendChild(newColBody);                 // вставляем 
 
@@ -39,12 +45,14 @@ plus.onclick = function(){
   }
   ////////////////////////
   ////////////////////////
-  let clearEventListeners = document.querySelectorAll('.card-container');    
+  /*let clearEventListeners = document.querySelectorAll('.card-container');    
   for (let elem of clearEventListeners){
     let old_element = elem;
     let new_element = elem.cloneNode(true);
     old_element.parentNode.replaceChild(new_element, old_element);
-  }
+  }*/
+
+  
   // этот кусочек кода удаляет все предыдущие обработчики событий
   // он необходим тк, в случае без него при создании n новых колонок
   // начинают создаваться n+1 форма создания карточки
@@ -52,8 +60,11 @@ plus.onclick = function(){
   // это из-за того что при каждом нажатии кнопки добавления колонки,
   // мы добавляем ещё один обработчик кликов с точно такими же функциями
   ////////////////////////
+  //let createCard = document.querySelectorAll('.card-container');
   let createCard = document.querySelectorAll('.card-container');
-  for (let elem of createCard){
+  //for (let elem of createCard){
+    let elem = createCard[createCard.length-1];
+    
     elem.addEventListener('click', addform);
     function addform(){
       //
@@ -92,9 +103,6 @@ plus.onclick = function(){
 
         let newCard = document.createElement('div');          // создаём обёртку карточки
         newCard.setAttribute('class', 'card');
-
-        // это для карточек которые будут созданы в новы стобцах
-        // нужно дописать для изначальных и новых карточек в начальных столбцах
         
         newCard.onclick = function(event){
           newCard.setAttribute('class', 'card-none');
@@ -170,6 +178,14 @@ plus.onclick = function(){
 
           event.stopPropagation();                             
         }
+        ///////////////////////////////////////////////////
+        // перетаскивание
+        newCard.setAttribute('draggable', 'true');
+        newCard.setAttribute('id', countCard);
+        countCard++;
+        newCard.ondragstart = dragStart;
+        
+        ///////////////////////////////////////////////////
 
         newCard.style.backgroundColor = inputCardColor.value; // задаём цвет фона
 
@@ -200,10 +216,106 @@ plus.onclick = function(){
       formCard.appendChild(cancelButton);
 
     }
+  //}
+
+  let editCard = document.querySelectorAll('.card');
+  for (let elem of editCard){
+    elem.onclick = function(event){
+      
+      elem.setAttribute('class', 'card-none');
+
+      let closerCardForm = elem.closest('.card-container');
+
+      let editCardForm = document.createElement('div');       // вставляем форму редактирования
+      editCardForm.setAttribute('class', 'card-edit-form');
+      closerCardForm.appendChild(editCardForm);
+      editCardForm.onclick = function(event){                 // чтобы при нажатии на форму редактирования
+        event.stopPropagation();                              // не создавалась обычная форма создания карточки
+      }
+
+      let editCardHeaderP = document.createElement('p');      // заголовок перед вводом заголовка
+      editCardHeaderP.innerText = "Введите заголовок";
+      editCardForm.appendChild(editCardHeaderP);
+
+      let editCardHeader = document.createElement('input');   // создаём поле ввода для заголовка
+      let oldCardHeader = elem.querySelector('.card-header');
+      editCardHeader.value = oldCardHeader.textContent;       // и присваиваем значение предыдущего заголовка
+      editCardForm.appendChild(editCardHeader);
+
+      let editCardBodyP = document.createElement('p');        // заголовок перед вводом описания
+      editCardBodyP.innerText = "Введите описание";
+      editCardForm.appendChild(editCardBodyP);
+
+      let editCardBody = document.createElement('textarea');  // создаём поле ввода для описание
+      let oldCardBody = elem.querySelector('.card-body');
+      editCardBody.value = oldCardBody.textContent;           // копируем в него предыдущее значение
+      editCardForm.appendChild(editCardBody);
+
+      let editCardColorP = document.createElement('p');       // заголовок для выбора цвета
+      editCardColorP.innerText = 'Выберите цвет';
+      editCardForm.appendChild(editCardColorP);
+
+      let editCardColor = document.createElement('input');
+      editCardColor.setAttribute('type', 'color');
+      editCardForm.appendChild(editCardColor);
+
+      let saveButton = document.createElement('button');      // сохранение
+      saveButton.innerText = 'Сохранить';
+      saveButton.onclick = function(){
+        let editedCardHeader = elem.querySelector('.card-header');  // меняем заголовок
+        editedCardHeader.textContent = editCardHeader.value;
+
+        let editedCardBody = elem.querySelector('.card-body');      // меняем описание
+        editedCardBody.textContent = editCardBody.value;
+
+        elem.style.backgroundColor = editCardColor.value;           // меняем цвет
+
+        editCardForm.remove();
+        elem.setAttribute('class', 'card');
+      }
+      editCardForm.appendChild(saveButton);
+
+      let cancelButton = document.createElement('button');    // отмена
+      cancelButton.innerText = 'Отмена';
+      cancelButton.onclick = function(){
+        editCardForm.remove();
+        elem.setAttribute('class', 'card');
+      }
+      editCardForm.appendChild(cancelButton);
+
+      let deleteButton = document.createElement('button');    // удаление
+      deleteButton.innerText = 'Удалить';
+      deleteButton.onclick = function(){
+        editCardForm.remove();
+        elem.remove();
+      }
+      editCardForm.appendChild(deleteButton);
+
+      event.stopPropagation();                             // предотвращает всплытие клика к форме
+    }
   }
 }
+// функции для перетаскивания
+function dragStart(event) {
+  event.dataTransfer.setData("Text", event.target.id);
+  //alert('asd1');
+}
+
+function allowDrop(event) {
+  event.preventDefault();
+  //alert('asd2');
+}
+
+function drop(event) {
+  event.preventDefault();
+  let data = event.dataTransfer.getData("Text");
+  event.target.appendChild(document.getElementById(data));
+}
+//
+
 // это повторяющийся кусок кода, чтобы можно было переименовывать те заголовки, что заданы изначально
 // я хз пока как это пофиксить
+/*
 let changeHeader = document.getElementsByClassName('column-header'); // выбираем заголовок для изменения
 for (let elem of changeHeader) {
   elem.onclick = function(){
@@ -454,7 +566,7 @@ for (let elem of createCard){
     formCard.appendChild(cancelButton);
   }
 }
-
+*/
 
 ///////////////
 // не работает изменения изначально созданных карточек после того как создадим новую колонку
