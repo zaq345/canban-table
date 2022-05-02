@@ -45,7 +45,6 @@ plus.onclick = function(){
 
   let createCard = document.querySelectorAll('.card-container');
   let elem = createCard[createCard.length-1];
-  
   elem.addEventListener('click', addform);
   function addform(){
     //
